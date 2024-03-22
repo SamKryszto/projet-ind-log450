@@ -1,0 +1,28 @@
+name: projet_ind_log450
+description: Projet de session individuel dans le cadre du cours d'application mobile.
+version: 1.0.0
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"  # Minimum Flutter SDK version required
+
+dependencies:
+  equatable: ^2.0.5
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.4
+  google_fonts: ^2.1.0
+  material_design_icons_flutter: ^6.0.0
+
+
+
+  # Add your dependencies here, for example:
+  # cupertino_icons: ^1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+# For information on the generic Dart part of this file, see the
+# Dart documentation: https://dart.dev/tools/pub/pubspec
