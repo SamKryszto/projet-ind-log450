@@ -15,7 +15,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
             allLettersGreen: true,
             validWords: [])) {
     on<GameStartedEvent>(_onGameStarted);
-    on<LetterSelectedEvent>(_onLetterSelected);
+    on<LetterSelectedEvent>(_onLetterAdded);
     on<TimerTickedEvent>(_onTimerTicked);
     on<LetterDragStartedEvent>(_onLetterDragStarted);
     on<LetterDragCompletedEvent>(_onLetterDragCompleted);
@@ -63,9 +63,11 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
       final newWord = modifiedWord.map((l) => l.value).join('');
       final isValid = currentState.validWords.contains(newWord);
 
-      modifiedWord.forEach((letter) {
-        letter.isCorrect = isValid; // Update correctness based on the new word
-      });
+      if (isValid) {
+        modifiedWord.forEach((letter) {
+          letter.isCorrect = isValid; // Update correctness based on the new word
+        });
+      }
 
       emit(currentState.copyWith(
         modifiedWord: modifiedWord,
@@ -75,7 +77,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
   
 }
 
-  void _onLetterSelected(LetterSelectedEvent event, Emitter<PlayState> emit) {
+  void _onLetterAdded(LetterSelectedEvent event, Emitter<PlayState> emit) {
     final currentState = state;
     List<Letter> modifiedWord = List<Letter>.from(currentState.modifiedWord);
 

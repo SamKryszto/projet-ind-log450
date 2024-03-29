@@ -56,7 +56,7 @@ class _ModifiedWordState extends State<ModifiedWord> {
 
   Widget _buildLetterVisual(Letter letter) {
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: EdgeInsets.all(6),
       decoration: BoxDecoration(
         color: letter.isCorrect ? Colors.green : Colors.blueAccent,
         borderRadius: BorderRadius.circular(4),

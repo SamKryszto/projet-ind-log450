@@ -18,8 +18,8 @@ class Alphabet extends StatelessWidget {
     return Center(
       child: Wrap(
         alignment: WrapAlignment.center,
-        spacing: 8.0, // Adjust spacing to match ModifiedWord
-        runSpacing: 8.0, // Adjust runSpacing to match ModifiedWord
+        spacing: 6.0, // Adjust spacing to match ModifiedWord
+        runSpacing: 6.0, // Adjust runSpacing to match ModifiedWord
         children: letters.map((letter) => _buildLetterButton(letter, context)).toList(),
       ),
     );
