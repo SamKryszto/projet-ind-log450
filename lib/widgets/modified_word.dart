@@ -24,8 +24,8 @@ class _ModifiedWordState extends State<ModifiedWord> {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: 8.0,
-      runSpacing: 8.0,
+      spacing: 0.0, // Keeps tiles close together
+      runSpacing: 0.0, // Keeps rows close together, if Wrap is vertical
       children: widget.modifiedWord
           .asMap()
           .entries
@@ -34,12 +34,16 @@ class _ModifiedWordState extends State<ModifiedWord> {
     );
   }
 
-  Widget _buildLetterTile(BuildContext context, int index, Letter letter) {
+ Widget _buildLetterTile(BuildContext context, int index, Letter letter) {
+    bool isFirst = index == 0;
+    bool isLast = index == widget.modifiedWord.length - 1;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildDragTarget(context, index - 0.5), // Target before the letter
-        Draggable<Letter>(
+        if (isFirst) 
+          _buildDragTarget(context, index - 0.5, true), // Enhanced target before the first letter
+        letter.isCorrect ? _buildLetterVisual(letter) : Draggable<Letter>(
           data: letter,
           feedback: Material(
             child: _buildLetterVisual(letter),
@@ -47,13 +51,14 @@ class _ModifiedWordState extends State<ModifiedWord> {
           ),
           childWhenDragging: Container(),
           child: _buildLetterVisual(letter),
-          onDragCompleted: () {}, // Prevents the disappearance on drop
         ),
-        _buildDragTarget(context, index + 0.5), // Target after the letter
+        if (isLast)
+          _buildDragTarget(context, index + 1.5, true), // Enhanced target after the last letter
+        if (!isLast)
+          _buildDragTarget(context, index + 0.5, false), // Normal target after the letter
       ],
     );
   }
-
   Widget _buildLetterVisual(Letter letter) {
     return Container(
       padding: EdgeInsets.all(6),
@@ -63,36 +68,34 @@ class _ModifiedWordState extends State<ModifiedWord> {
       ),
       child: Text(
         letter.value.toUpperCase(),
-        style: TextStyle(fontSize: 24, color: Colors.white),
+        style: TextStyle(fontSize: 20, color: Colors.white),
       ),
     );
   }
 
-  Widget _buildDragTarget(BuildContext context, double targetIndex) {
-  return DragTarget<Letter>(
-    onWillAcceptWithDetails: (data) => true,
-    onAcceptWithDetails: (details) {
-      final Letter letter = details.data; // Extract the letter from details
-      final newIndex = targetIndex.round();
-      // You might have intended to find the old index from the list, but
-      // DragTargetDetails doesn't directly give you the old index.
-      // You'll need a way to track the dragged Letter's original index if it's not part of the Letter model.
-      final oldIndex = widget.modifiedWord.indexOf(letter);
+  Widget _buildDragTarget(BuildContext context, double targetIndex, bool isExtended) {
+    return DragTarget<Letter>(
+      onWillAcceptWithDetails: (data) => true,
+      onAcceptWithDetails: (details) {
+        final Letter letter = details.data;
+        final int newIndex = (targetIndex < 0) ? 0 : (targetIndex > widget.modifiedWord.length) ? widget.modifiedWord.length : targetIndex.round();
+        final int oldIndex = widget.modifiedWord.indexOf(letter);
 
-      context.read<PlayBloc>().add(LetterDragCompletedEvent(
-        letter: letter,
-        startIndex: oldIndex,
-        endIndex: newIndex,
-      ));
-    },
-    builder: (context, candidateData, rejectedData) {
-      return Container(
-        width: 8.0,
-        height: 48.0,
-        color: Colors.transparent, // For debugging, you can temporarily change this to a visible color
-      );
-    },
-  );
+        // Adjust your logic if needed based on the newIndex calculation for extended targets
+        context.read<PlayBloc>().add(LetterDragCompletedEvent(
+          letter: letter,
+          startIndex: oldIndex,
+          endIndex: newIndex,
+        ));
+      },
+      builder: (context, candidateData, rejectedData) {
+        return Container(
+          width: isExtended ? 50.0 : 20.0, // Double size for the first and last targets
+          height: 70.0,
+          color: Colors.transparent, // Make visible for debugging or keep transparent
+        );
+      },
+    );
+  }
 }
 
-}
