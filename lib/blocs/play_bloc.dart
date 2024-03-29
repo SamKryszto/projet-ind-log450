@@ -77,7 +77,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
 
     emit(PlayInitialState(
         modifiedWord: initialWord,
-        remainingTime: 60,
+        remainingTime: 30,
         startWord: startWord,
         endWord: endWord,
         allLettersGreen: true,

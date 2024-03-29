@@ -37,13 +37,13 @@ class AppLocalizations {
       // Add more translations
     },
     'congratulations_description': {
-      'en': 'Congratulations!',
-      'fr': 'Félicitations!',
+      'en': 'You did it!',
+      'fr': 'Vous avez réussi!',
       // Add more translations
     },
     'times_up_description': {
-      'en': 'Time\'s up!',
-      'fr': 'C\'est fini!',
+      'en': 'Time limit was reached!!',
+      'fr': 'La limite de temps est dépassée!',
       // Add more translations
     },
     'next': {
@@ -52,8 +52,8 @@ class AppLocalizations {
       // Add more translations
     },
     'restart': {
-      'en': 'Restart',
-      'fr': 'Recommencer',
+      'en': 'Go!',
+      'fr': 'Allez!',
       // Add more translations
     },
     'home': {
