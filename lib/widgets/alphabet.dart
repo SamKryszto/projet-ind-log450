@@ -6,7 +6,6 @@ class Alphabet extends StatelessWidget {
   final bool allLettersGreen;
   final VoidCallback updateAlphabetState;
   
-
   Alphabet({
     Key? key,
     required this.onLetterSelected,
@@ -16,27 +15,38 @@ class Alphabet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center( // Wrap in a Center widget to align in the middle
+    return Center(
       child: Wrap(
-        alignment: WrapAlignment.center, // Align wrap contents to center
-        spacing: 5,
-        runSpacing: 5,
+        alignment: WrapAlignment.center,
+        spacing: 8.0, // Adjust spacing to match ModifiedWord
+        runSpacing: 8.0, // Adjust runSpacing to match ModifiedWord
         children: letters.map((letter) => _buildLetterButton(letter, context)).toList(),
       ),
     );
   }
 
   Widget _buildLetterButton(String letter, BuildContext context) {
-    return ElevatedButton(
-      onPressed: allLettersGreen ? null : () => onLetterSelected(letter),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: allLettersGreen ? Colors.grey : Colors.blue,
-        shape: CircleBorder(), // Added for rounded buttons
-        padding: EdgeInsets.all(16), // Padding inside the button
-      ),
-      child: Text(
-        letter,
-        style: TextStyle(color: Colors.white, fontSize: 16), // Text style with white color
+    return Container(
+      margin: EdgeInsets.all(4), // Margin around each tile
+      child: ElevatedButton(
+        onPressed: allLettersGreen ? () => onLetterSelected(letter) : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: allLettersGreen ? Colors.blueAccent : Colors.grey, // Adjusted colors to match ModifiedWord
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          padding: EdgeInsets.zero, // Remove padding to allow the Container to control the size
+          // Specify minimum size to be zero to allow for smaller sizes
+          minimumSize: Size(0, 0),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Minimize the tap target size
+        ),
+        child: Container(
+          width: 40, // Specified width to match ModifiedWord tiles
+          height: 48, // Specified height to match ModifiedWord tiles
+          alignment: Alignment.center, // Ensure the letter is centered
+          child: Text(
+            letter.toUpperCase(),
+            style: TextStyle(fontSize: 24, color: Colors.white),
+          ),
+        ),
       ),
     );
   }
