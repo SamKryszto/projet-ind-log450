@@ -33,7 +33,18 @@ class _PlayPageState extends State<PlayPage> {
       var localizations = AppLocalizations(languageState.currentLanguage);
       return Scaffold(
         appBar: AppBar(
-        ),
+            // The leading IconButton overrides the default back button
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                // Here you dispatch an event to your PlayBloc to cancel the timer
+                context.read<PlayBloc>().add(TimerCanceledEvent()); // Make sure you have such an event
+                
+                // Then, navigate back to the previous screen
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
         body: BlocBuilder<PlayBloc, PlayState>(
           builder: (context, state) {
             if (state is TimeUpState) {

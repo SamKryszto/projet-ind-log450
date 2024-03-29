@@ -25,6 +25,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     on<LetterDragStartedEvent>(_onLetterDragStarted);
     on<LetterDragCompletedEvent>(_onLetterDragCompleted);
     on<RemoveLetterEvent>(_onRemoveLetter);
+    on<TimerCanceledEvent>(_onTimerCanceled);
   }
 
   Future<void> _onGameStarted(GameStartedEvent event, Emitter<PlayState> emit) async {
@@ -121,7 +122,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
       if (checkWinCondition(modifiedWord, currentState.endWord)) {
         _timer?.cancel();
         emit(WonGameState(
-          modifiedWord: currentState.modifiedWord,
+          modifiedWord: modifiedWord,
           remainingTime: currentState.remainingTime,
           startWord: currentState.startWord,
           endWord: currentState.endWord,
@@ -146,9 +147,8 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
         modifiedWord.map((l) => l.value).join('') + event.letter;
 
     // Determine if the new letter makes the modified word a correct prefix or a complete word
-    bool isLetterCorrect = currentState.validWords
-        .any((word) => word.startsWith(newModifiedWordStr));
-
+    bool isLetterCorrect = currentState.validWords.contains(newModifiedWordStr);
+        
     // Add the new letter to modifiedWord with its correctness determined
     modifiedWord.add(Letter(
         value: event.letter,
@@ -162,7 +162,7 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     if (checkWinCondition(modifiedWord, currentState.endWord)) {
       _timer?.cancel();
       emit(WonGameState(
-        modifiedWord: currentState.modifiedWord,
+        modifiedWord: modifiedWord,
         remainingTime: currentState.remainingTime,
         startWord: currentState.startWord,
         endWord: currentState.endWord,
@@ -197,6 +197,11 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
       ));
     }
   }
+
+    void _onTimerCanceled(TimerCanceledEvent event, Emitter<PlayState> emit) {
+              _timer?.cancel();
+    }
+
 
   void _onRemoveLetter(RemoveLetterEvent event, Emitter<PlayState> emit) {
     final currentState = state;

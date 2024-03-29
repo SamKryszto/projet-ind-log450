@@ -55,3 +55,5 @@ class LetterDragCompletedEvent extends PlayEvent {
   List<Object?> get props => [letter, startIndex, endIndex];
 }
 
+class TimerCanceledEvent extends PlayEvent {}
+
