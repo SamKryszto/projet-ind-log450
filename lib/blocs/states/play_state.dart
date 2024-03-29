@@ -82,7 +82,7 @@ class PlayInProgressState extends PlayState {
             allLettersGreen: allLettersGreen,
             validWords: validWords);
   @override
-  PlayInitialState copyWith({
+  PlayInProgressState copyWith({
     List<Letter>? modifiedWord,
     int? remainingTime,
     String? startWord,
@@ -90,7 +90,7 @@ class PlayInProgressState extends PlayState {
     bool? allLettersGreen,
     List<String>? validWords,
   }) {
-    return PlayInitialState(
+    return PlayInProgressState(
       modifiedWord: modifiedWord ?? this.modifiedWord,
       remainingTime: remainingTime ?? this.remainingTime,
       startWord: startWord ?? this.startWord,
@@ -117,7 +117,7 @@ class TimeUpState extends PlayState {
             allLettersGreen: allLettersGreen,
             validWords: validWords);
   @override
-  PlayInitialState copyWith({
+  TimeUpState copyWith({
     List<Letter>? modifiedWord,
     int? remainingTime,
     String? startWord,
@@ -125,7 +125,7 @@ class TimeUpState extends PlayState {
     bool? allLettersGreen,
     List<String>? validWords,
   }) {
-    return PlayInitialState(
+    return TimeUpState(
       modifiedWord: modifiedWord ?? this.modifiedWord,
       remainingTime: remainingTime ?? this.remainingTime,
       startWord: startWord ?? this.startWord,
@@ -152,7 +152,7 @@ class WonGameState extends PlayState {
             allLettersGreen: allLettersGreen,
             validWords: validWords);
   @override
-  PlayInitialState copyWith({
+  WonGameState copyWith({
     List<Letter>? modifiedWord,
     int? remainingTime,
     String? startWord,
@@ -160,7 +160,7 @@ class WonGameState extends PlayState {
     bool? allLettersGreen,
     List<String>? validWords,
   }) {
-    return PlayInitialState(
+    return WonGameState(
       modifiedWord: modifiedWord ?? this.modifiedWord,
       remainingTime: remainingTime ?? this.remainingTime,
       startWord: startWord ?? this.startWord,

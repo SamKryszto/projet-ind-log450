@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:projet_ind_log450/blocs/events/play_event.dart';
 import '../pages/home_page.dart'; 
+import '../pages/play_page.dart'; 
 import '../blocs/play_bloc.dart'; // Import the PlayBloc
 
 class TimeUpDialog extends StatelessWidget {
@@ -43,6 +44,9 @@ class TimeUpDialog extends StatelessWidget {
                 
                 // Close the dialog
                 Navigator.of(context).pop();
+
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PlayPage()));
+
               },
               style: TextButton.styleFrom(
                 backgroundColor: Colors.green,

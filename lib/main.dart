@@ -16,12 +16,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<LanguageBloc>(create: (context) => LanguageBloc()),
         BlocProvider<NavigationBloc>(create: (context) => NavigationBloc()),
         BlocProvider<SettingsBloc>(create: (context) => SettingsBloc()),
         BlocProvider<PlayBloc>(
-          create: (context) => PlayBloc(),
+          create: (context) => PlayBloc(languageBloc: BlocProvider.of<LanguageBloc>(context)),
         ),
-        BlocProvider<LanguageBloc>(create: (context) => LanguageBloc()),
       ],
       child: BlocBuilder<LanguageBloc, LanguageState>(
         builder: (context, state) {

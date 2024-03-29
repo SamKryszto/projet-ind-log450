@@ -1,18 +1,22 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../blocs/language_bloc.dart'; // Import the path correctly
 import 'events/play_event.dart'; // Update this import to where your PlayEvent is located
 import 'states/play_state.dart'; // Update this import to where your PlayState is located
 import '../models/letter.dart'; // Update this import to where your Letter model is located
+import 'package:flutter/services.dart' show rootBundle;
+
 
 class PlayBloc extends Bloc<PlayEvent, PlayState> {
   Timer? _timer;
-  PlayBloc()
+  final LanguageBloc languageBloc;
+  PlayBloc({required this.languageBloc})
       : super(PlayInitialState(
             modifiedWord: [],
-            remainingTime: 60,
-            startWord: "pan",
-            endWord: "planter",
+            remainingTime: 30,
+            startWord: "",
+            endWord: "",
             allLettersGreen: true,
             validWords: [])) {
     on<GameStartedEvent>(_onGameStarted);
@@ -23,26 +27,63 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     on<RemoveLetterEvent>(_onRemoveLetter);
   }
 
-  void _onGameStarted(GameStartedEvent event, Emitter<PlayState> emit) {
+  Future<void> _onGameStarted(GameStartedEvent event, Emitter<PlayState> emit) async {
     _timer?.cancel(); // Cancel any existing timer
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      add(TimerTickedEvent());
+        add(TimerTickedEvent());
     });
 
-    List<Letter> initialWord = "pan".split('').asMap().entries.map((entry) {
-      return Letter(value: entry.value, index: entry.key, isCorrect: true);
-    }).toList();
+    String currentLanguage = languageBloc.state.currentLanguage;
 
-    List<String> validWords = ['pan', 'plan', 'plant', 'plante', 'planter'];
+    /// Determine the correct path for the dictionary file
+    String dictionaryPath = (currentLanguage == "fr") 
+        ? 'dictionaries/french_dictionary.csv' 
+        : 'dictionaries/english_dictionary.csv';
+
+    // Load the dictionary content using rootBundle
+    String dictionaryContent = await rootBundle.loadString(dictionaryPath);
+    List<String> lines = dictionaryContent.trim().split('\n');
+
+    // Filter out empty lines
+    List<String> nonEmptyLines = lines.where((line) => line.trim().isNotEmpty).toList();
+
+    if (nonEmptyLines.isEmpty) {
+        // Handle the case where no non-empty lines are found
+        print('No non-empty lines found in the dictionary.');
+        return; // Exit the function or use a fallback approach
+    }
+
+    Random random = Random();
+    // Select a random non-empty line
+    List<String> validWords = nonEmptyLines[random.nextInt(nonEmptyLines.length)].split(',');
+
+    // Clean the words list from empty entries and trim each word
+    validWords = validWords.where((word) => word.trim().isNotEmpty).map((word) => word.trim()).toList();
+
+    // Ensure there's at least one word in validWords before proceeding
+    if (validWords.isEmpty) {
+        print('Selected line is empty after trimming.');
+        return; // Exit the function or use a fallback approach
+    }
+
+    // Set startWord and endWord from the validWords list
+    String startWord = validWords.first;
+    String endWord = validWords.last;
+
+    // Map the startWord to List<Letter>
+    List<Letter> initialWord = startWord.split('').asMap().entries.map((entry) {
+        return Letter(value: entry.value, index: entry.key, isCorrect: true);
+    }).toList();
 
     emit(PlayInitialState(
         modifiedWord: initialWord,
         remainingTime: 60,
-        startWord: "pan",
-        endWord: "planter",
+        startWord: startWord,
+        endWord: endWord,
         allLettersGreen: true,
         validWords: validWords));
-  }
+}
+
 
   void _onLetterDragStarted(
       LetterDragStartedEvent event, Emitter<PlayState> emit) {

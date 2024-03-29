@@ -24,5 +24,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - dictionaries/english_dictionary.csv
+    - dictionaries/french_dictionary.csv
 # For information on the generic Dart part of this file, see the
 # Dart documentation: https://dart.dev/tools/pub/pubspec

@@ -22,8 +22,8 @@ class AppLocalizations {
       // Add more translations
     },
     'import_dic': {
-      'en': 'Enter URI for custom dictionary',
-      'fr': 'Entrer le URI du dictionnaire personnalisé',
+      'en': 'Enter URL for custom dictionary',
+      'fr': 'Entrer le URL du dictionnaire personnalisé',
       // Add more translations
     },
     'congratulations_title': {
@@ -61,7 +61,16 @@ class AppLocalizations {
       'fr': 'Accueil',
       // Add more translations
     },
-    
+    'time remaining': {
+      'en': 'Time remaining: ',
+      'fr': 'Temps restant: ',
+      // Add more translations
+    },
+    'remove': {
+      'en': 'remove',
+      'fr': 'enlever',
+      // Add more translations
+    },
     
     // Add more keys and translations
   };

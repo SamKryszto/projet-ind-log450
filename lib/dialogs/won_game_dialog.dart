@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:projet_ind_log450/blocs/events/play_event.dart';
 import '../pages/home_page.dart'; 
-import '../blocs/play_bloc.dart'; // Import the PlayBloc
+import '../blocs/play_bloc.dart';
+import '../pages/play_page.dart'; // Import the PlayBloc
 
 class WonGameDialog extends StatelessWidget {
   @override
@@ -39,10 +40,13 @@ class WonGameDialog extends StatelessWidget {
             TextButton(
               onPressed: () {
                 // Dispatch an event to reset the game state
-                context.read<PlayBloc>().add(GameStartedEvent());
-                
-                // Close the dialog
+
                 Navigator.of(context).pop();
+
+                context.read<PlayBloc>().add(GameStartedEvent());
+
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => PlayPage()));
+
               },
               style: TextButton.styleFrom(
                 backgroundColor: Colors.green,
