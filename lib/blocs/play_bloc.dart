@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'events/play_event.dart'; // Update this import to where your PlayEvent is located
 import 'states/play_state.dart'; // Update this import to where your PlayState is located
@@ -15,10 +16,11 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
             allLettersGreen: true,
             validWords: [])) {
     on<GameStartedEvent>(_onGameStarted);
-    on<LetterSelectedEvent>(_onLetterAdded);
+    on<LetterAddedEvent>(_onLetterAdded);
     on<TimerTickedEvent>(_onTimerTicked);
     on<LetterDragStartedEvent>(_onLetterDragStarted);
     on<LetterDragCompletedEvent>(_onLetterDragCompleted);
+    on<RemoveLetterEvent>(_onRemoveLetter);
   }
 
   void _onGameStarted(GameStartedEvent event, Emitter<PlayState> emit) {
@@ -47,17 +49,22 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     // This might not need to change the state but is here if you need to react to the start of a drag.
   }
 
-  void _onLetterDragCompleted(LetterDragCompletedEvent event, Emitter<PlayState> emit) {
-  final currentState = state;
+  void _onLetterDragCompleted(
+      LetterDragCompletedEvent event, Emitter<PlayState> emit) {
+    final currentState = state;
     List<Letter> modifiedWord = List<Letter>.from(currentState.modifiedWord);
-    Letter letterToMove = modifiedWord.firstWhere((letter) => letter == event.letter, orElse: () => Letter(value: '', index: 0, isCorrect: false));
-    
+    Letter letterToMove = modifiedWord.firstWhere(
+        (letter) => letter == event.letter,
+        orElse: () => Letter(value: '', index: 0, isCorrect: false));
+
     if (letterToMove.value != '') {
       modifiedWord.remove(letterToMove);
       if (event.endIndex >= modifiedWord.length) {
-        modifiedWord.add(letterToMove); // Add to the end if the index exceeds the list size
+        modifiedWord.add(
+            letterToMove); // Add to the end if the index exceeds the list size
       } else {
-        modifiedWord.insert(event.endIndex, letterToMove); // Insert at specific index
+        modifiedWord.insert(
+            event.endIndex, letterToMove); // Insert at specific index
       }
 
       final newWord = modifiedWord.map((l) => l.value).join('');
@@ -65,19 +72,31 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
 
       if (isValid) {
         modifiedWord.forEach((letter) {
-          letter.isCorrect = isValid; // Update correctness based on the new word
+          letter.isCorrect =
+              isValid; // Update correctness based on the new word
         });
       }
 
-      emit(currentState.copyWith(
-        modifiedWord: modifiedWord,
-        allLettersGreen: modifiedWord.every((letter) => letter.isCorrect),
-      ));
+      if (checkWinCondition(modifiedWord, currentState.endWord)) {
+        _timer?.cancel();
+        emit(WonGameState(
+          modifiedWord: currentState.modifiedWord,
+          remainingTime: currentState.remainingTime,
+          startWord: currentState.startWord,
+          endWord: currentState.endWord,
+          allLettersGreen: true,
+          validWords: currentState.validWords,
+        ));
+      } else {
+        emit(currentState.copyWith(
+          modifiedWord: modifiedWord,
+          allLettersGreen: modifiedWord.every((letter) => letter.isCorrect),
+        ));
+      }
     }
-  
-}
+  }
 
-  void _onLetterAdded(LetterSelectedEvent event, Emitter<PlayState> emit) {
+  void _onLetterAdded(LetterAddedEvent event, Emitter<PlayState> emit) {
     final currentState = state;
     List<Letter> modifiedWord = List<Letter>.from(currentState.modifiedWord);
 
@@ -99,14 +118,25 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
     bool allLettersGreen = modifiedWord.every((letter) => letter.isCorrect) &&
         currentState.validWords.any((word) => word == newModifiedWordStr);
 
-    // Emit the updated state
-    emit(PlayInProgressState(
-        modifiedWord: modifiedWord,
+    if (checkWinCondition(modifiedWord, currentState.endWord)) {
+      _timer?.cancel();
+      emit(WonGameState(
+        modifiedWord: currentState.modifiedWord,
         remainingTime: currentState.remainingTime,
         startWord: currentState.startWord,
         endWord: currentState.endWord,
-        allLettersGreen: allLettersGreen,
-        validWords: currentState.validWords));
+        allLettersGreen: true,
+        validWords: currentState.validWords,
+      ));
+    } else {
+      emit(PlayInProgressState(
+          modifiedWord: modifiedWord,
+          remainingTime: currentState.remainingTime,
+          startWord: currentState.startWord,
+          endWord: currentState.endWord,
+          allLettersGreen: allLettersGreen,
+          validWords: currentState.validWords));
+    }
   }
 
   void _onTimerTicked(TimerTickedEvent event, Emitter<PlayState> emit) {
@@ -115,7 +145,41 @@ class PlayBloc extends Bloc<PlayEvent, PlayState> {
       emit(
           currentState.copyWith(remainingTime: currentState.remainingTime - 1));
     } else {
-      _timer?.cancel(); // Optionally handle game over or time-up scenario
+      _timer?.cancel();
+      emit(TimeUpState(
+        modifiedWord: currentState.modifiedWord,
+        remainingTime: currentState.remainingTime,
+        startWord: currentState.startWord,
+        endWord: currentState.endWord,
+        allLettersGreen: true,
+        validWords: currentState.validWords,
+      ));
     }
+  }
+
+  void _onRemoveLetter(RemoveLetterEvent event, Emitter<PlayState> emit) {
+    final currentState = state;
+
+    // Create a new list containing only the correct letters
+    List<Letter> modifiedWord =
+        currentState.modifiedWord.where((letter) => letter.isCorrect).toList();
+
+    // Emit a new state with the updated modifiedWord list
+    emit(PlayInProgressState(
+      modifiedWord: modifiedWord,
+      remainingTime: currentState.remainingTime,
+      startWord: currentState.startWord,
+      endWord: currentState.endWord,
+      allLettersGreen: true,
+      validWords: currentState.validWords,
+    ));
+  }
+
+  bool checkWinCondition(modifiedWord, endWord) {
+    String word = modifiedWord.map((l) => l.value).join('');
+    if (endWord == word) {
+      return true;
+    } else
+      return false;
   }
 }

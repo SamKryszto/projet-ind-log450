@@ -8,10 +8,12 @@ abstract class PlayEvent extends Equatable {
 
 class GameStartedEvent extends PlayEvent {}
 
-class LetterSelectedEvent extends PlayEvent {
+class RemoveLetterEvent extends PlayEvent {}
+
+class LetterAddedEvent extends PlayEvent {
   final String letter;
 
-  LetterSelectedEvent({required this.letter});
+  LetterAddedEvent({required this.letter});
 
   @override
   List<Object?> get props => [letter];

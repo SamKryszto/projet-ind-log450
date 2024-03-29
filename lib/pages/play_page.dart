@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:projet_ind_log450/dialogs/time_up_dialog.dart';
+import 'package:projet_ind_log450/dialogs/won_game_dialog.dart';
 import 'package:projet_ind_log450/widgets/modified_word.dart';
 import '../blocs/play_bloc.dart';
 import '../blocs/events/play_event.dart';
 import '../blocs/states/play_state.dart';
 import '../models/letter.dart';
 import '../widgets/alphabet.dart';
+
+
 
 class PlayPage extends StatefulWidget {
   @override
@@ -27,6 +31,28 @@ class _PlayPageState extends State<PlayPage> {
       appBar: AppBar(),
       body: BlocBuilder<PlayBloc, PlayState>(
         builder: (context, state) {
+          if (state is TimeUpState) {
+            // Show the time up dialog
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return TimeUpDialog(); // Your custom dialog
+                },
+              );
+            });
+          }
+          if (state is WonGameState) {
+            // Show the time up dialog
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return WonGameDialog(); // Your custom dialog
+                },
+              );
+            });
+          }
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -100,22 +126,58 @@ class _PlayPageState extends State<PlayPage> {
               ),
               Spacer(), // Centers the ModifiedWord vertically
               // ModifiedWord centered
-              Center( // Centers the content of ModifiedWord horizontally
+              Center(
+                // Centers the content of ModifiedWord horizontally
                 child: ModifiedWord(
-                    modifiedWord: state.modifiedWord,
-                    onWordUpdated: (List<Letter> updatedWord) {
-                         context.read<PlayBloc>().add(WordUpdatedEvent(updatedWord));
-
-                    },
+                  modifiedWord: state.modifiedWord,
+                  onWordUpdated: (List<Letter> updatedWord) {
+                    context.read<PlayBloc>().add(WordUpdatedEvent(updatedWord));
+                  },
+                ),
+              ),
+              Spacer(), // Adds symmetry to the layout
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                        context.read<PlayBloc>().add(RemoveLetterEvent());
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (state.allLettersGreen) {
+                          return Colors
+                              .transparent; // Transparent button when all letters are green
+                        } else {
+                          return Colors.red; // Red button otherwise
+                        }
+                      },
+                    ),
+                    foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                      (Set<MaterialState> states) {
+                        if (state.allLettersGreen) {
+                          return Colors
+                              .transparent; // Transparent text when all letters are green
+                        } else {
+                          return Colors.white; // White text otherwise
+                        }
+                      },
+                    ),
+                    // Remove shadow and splash effect for transparent button
+                    overlayColor: MaterialStateProperty.all(Colors.transparent),
+                    shadowColor: MaterialStateProperty.all(Colors.transparent),
+                    elevation: MaterialStateProperty.all(0),
                   ),
+                  child: Text('Remove'),
+                ),
               ),
               Spacer(), // Adds symmetry to the layout
               // Alphabet
               Padding(
                 padding: EdgeInsets.only(bottom: 16.0),
                 child: Alphabet(
-                  onLetterSelected: (String letter) {
-                    BlocProvider.of<PlayBloc>(context).add(LetterSelectedEvent(letter: letter));
+                  onLetterAdded: (String letter) {
+                    BlocProvider.of<PlayBloc>(context)
+                        .add(LetterAddedEvent(letter: letter));
                   },
                   allLettersGreen: state.allLettersGreen,
                   updateAlphabetState: () {

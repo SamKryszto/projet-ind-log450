@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class Alphabet extends StatelessWidget {
   final List<String> letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-  final Function(String) onLetterSelected;
+  final Function(String) onLetterAdded;
   final bool allLettersGreen;
   final VoidCallback updateAlphabetState;
   
   Alphabet({
     Key? key,
-    required this.onLetterSelected,
+    required this.onLetterAdded,
     required this.allLettersGreen,
     required this.updateAlphabetState,
   }) : super(key: key);
@@ -29,7 +29,7 @@ class Alphabet extends StatelessWidget {
     return Container(
       margin: EdgeInsets.all(4), // Margin around each tile
       child: ElevatedButton(
-        onPressed: allLettersGreen ? () => onLetterSelected(letter) : null,
+        onPressed: allLettersGreen ? () => onLetterAdded(letter) : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: allLettersGreen ? Colors.blueAccent : Colors.grey, // Adjusted colors to match ModifiedWord
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),

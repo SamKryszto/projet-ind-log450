@@ -62,6 +62,7 @@ class AppLocalizations {
       // Add more translations
     },
     
+    
     // Add more keys and translations
   };
 

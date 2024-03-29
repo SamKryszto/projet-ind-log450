@@ -100,3 +100,73 @@ class PlayInProgressState extends PlayState {
     );
   }
 }
+
+class TimeUpState extends PlayState {
+  TimeUpState(
+      {required List<Letter> modifiedWord,
+      required int remainingTime,
+      required String startWord,
+      required String endWord,
+      required bool allLettersGreen,
+      required List<String> validWords})
+      : super(
+            modifiedWord: modifiedWord,
+            remainingTime: remainingTime,
+            startWord: startWord,
+            endWord: endWord,
+            allLettersGreen: allLettersGreen,
+            validWords: validWords);
+  @override
+  PlayInitialState copyWith({
+    List<Letter>? modifiedWord,
+    int? remainingTime,
+    String? startWord,
+    String? endWord,
+    bool? allLettersGreen,
+    List<String>? validWords,
+  }) {
+    return PlayInitialState(
+      modifiedWord: modifiedWord ?? this.modifiedWord,
+      remainingTime: remainingTime ?? this.remainingTime,
+      startWord: startWord ?? this.startWord,
+      endWord: endWord ?? this.endWord,
+      allLettersGreen: allLettersGreen ?? this.allLettersGreen,
+      validWords: validWords ?? this.validWords,
+    );
+  }
+}
+
+class WonGameState extends PlayState {
+  WonGameState(
+      {required List<Letter> modifiedWord,
+      required int remainingTime,
+      required String startWord,
+      required String endWord,
+      required bool allLettersGreen,
+      required List<String> validWords})
+      : super(
+            modifiedWord: modifiedWord,
+            remainingTime: remainingTime,
+            startWord: startWord,
+            endWord: endWord,
+            allLettersGreen: allLettersGreen,
+            validWords: validWords);
+  @override
+  PlayInitialState copyWith({
+    List<Letter>? modifiedWord,
+    int? remainingTime,
+    String? startWord,
+    String? endWord,
+    bool? allLettersGreen,
+    List<String>? validWords,
+  }) {
+    return PlayInitialState(
+      modifiedWord: modifiedWord ?? this.modifiedWord,
+      remainingTime: remainingTime ?? this.remainingTime,
+      startWord: startWord ?? this.startWord,
+      endWord: endWord ?? this.endWord,
+      allLettersGreen: allLettersGreen ?? this.allLettersGreen,
+      validWords: validWords ?? this.validWords,
+    );
+  }
+}
